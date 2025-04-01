@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+*.ko
 
 # Precompiled Headers
 *.gch
@@ -13,8 +14,10 @@
 
 # Compiled Dynamic libraries
 *.so
+*.so.*
 *.dylib
 *.dll
+*.DLL
 
 # Fortran module files
 *.mod
@@ -25,8 +28,93 @@
 *.la
 *.a
 *.lib
+*.LIB
 
 # Executables
 *.exe
 *.out
 *.app
+*.bin
+*.run
+
+# Debug files
+*.ilk
+*.pdb
+*.idb
+*.exp
+*.suo
+*.sdf
+*.opensdf
+*.user
+*.vsp
+*.vspx
+*.psess
+*.VC.db
+
+# Build directories
+build/
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+.vs/
+.idea/
+.vscode/
+cmake-build-*/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+CTestTestfile.cmake
+Testing/
+
+# Autotools generated files
+autom4te.cache/
+aclocal.m4
+compile
+config.*
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+m4/
+missing
+stamp-h1
+
+# Qt generated files
+moc_*.cpp
+*.moc
+ui_*.h
+qrc_*.cpp
+*.qrc.d
+*.qmlc
+*.jsc
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor temp files
+*~
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Package files
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+*.7z
