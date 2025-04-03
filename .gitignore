@@ -118,3 +118,8 @@ Thumbs.db
 *.tar.gz
 *.zip
 *.7z
+
+
+*.clangd-format
+*.idx
+.cache/

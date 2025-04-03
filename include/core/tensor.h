@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <random> 
 #include <sstream>
 #include <initializer_list>
 #include "macros.h"
@@ -14,6 +15,10 @@ namespace core {
 
 // 前向声明
 class TensorImpl;
+namespace autograd {
+    class Function;
+}
+
 
 class Tensor {
 public:
@@ -30,6 +35,8 @@ public:
     
     ~Tensor();
 
+    Tensor clone() const;
+
     // 赋值操作符
     Tensor& operator=(const Tensor& other);
     Tensor& operator=(Tensor&& other) noexcept;
@@ -42,12 +49,14 @@ public:
     DType dtype() const;
     Device device() const;
     Tensor contiguous() const;
+    bool is_pinned() const;
     bool is_contiguous() const;
     void* data_ptr();
+    void pin_memory();
     const void* data_ptr() const;
     
     // 设备转换
-    Tensor to(Device device) const;
+    Tensor to(Device device, AllocStrategy strategy = AllocStrategy::DEFAULT) const;
     Tensor cpu() const;
     Tensor cuda() const;
     
@@ -87,6 +96,9 @@ public:
     
     // 张量拼接
     static Tensor cat(const std::vector<Tensor>& tensors, int64_t dim = 0);
+
+    static Tensor ones_like(const Tensor& input);
+    static Tensor zeros_like(const Tensor& input);
     
     // 操作符重载
     Tensor operator+(const Tensor& other) const;
@@ -109,31 +121,26 @@ public:
     Tensor operator>(const Tensor& other) const;
     Tensor operator>=(const Tensor& other) const;
     
-    // 矩阵乘法
-    Tensor matmul(const Tensor& other) const;
-    
-    // 点乘
-    Tensor dot(const Tensor& other) const;
-    
-    // 归约操作
-    Tensor sum(int64_t dim = -1, bool keepdim = false) const;
-    Tensor mean(int64_t dim = -1, bool keepdim = false) const;
-    Tensor max(int64_t dim = -1, bool keepdim = false) const;
-    Tensor min(int64_t dim = -1, bool keepdim = false) const;
-    
-    // 激活函数
-    Tensor relu() const;
-    Tensor gelu() const;
-    Tensor sigmoid() const;
-    Tensor tanh() const;
-    Tensor softmax(int64_t dim = -1) const;
-    Tensor log_softmax(int64_t dim = -1) const;
-    
     // 自动微分相关
-    void backward(const Tensor& grad = Tensor());
-    Tensor grad() const;
-    void set_requires_grad(bool requires_grad);
+    bool defined() const {return impl_ != nullptr;}
+
+    Tensor& requires_grad_(bool requires_grad = true);
     bool requires_grad() const;
+    
+    Tensor grad() const;
+    void set_grad(const Tensor& grad);
+    
+    void backward(const Tensor& grad = Tensor());
+    
+    std::shared_ptr<autograd::Function> grad_fn() const;
+    void set_grad_fn(const std::shared_ptr<autograd::Function>& grad_fn);
+
+    // 自动微分感知的工厂方法
+    static Tensor make_autograd_aware(
+        const std::vector<int64_t>& shape,
+        DType dtype = kFloat32,
+        Device device = kCPU,
+        bool requires_grad = false);
     
     // 打印张量
     std::string to_string() const;
@@ -160,6 +167,8 @@ private:
 
     std::shared_ptr<TensorImpl> impl_;
     friend class TensorImpl;
+    friend class autograd::Function;
+
 };
 
 } // namespace core

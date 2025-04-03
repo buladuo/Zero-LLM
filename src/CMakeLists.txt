@@ -4,9 +4,18 @@ add_library(core
     core/device.cpp
     core/tensor.cpp
     core/tensor_ops.cpp
+    core/autograd/engine.cpp
+    core/autograd/variable.cpp
+    core/autograd/function/math/add.cpp
+    core/autograd/function/math/matmul.cpp
 )
 
-target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include/core)
+target_include_directories(core PUBLIC 
+    ${CMAKE_SOURCE_DIR}/include/core
+    ${CMAKE_SOURCE_DIR}/include/core/autograd
+    ${CMAKE_SOURCE_DIR}/include/core/autograd/function
+    ${CMAKE_SOURCE_DIR}/include/core/autograd/function/math
+)
 
 # Layers library
 add_library(layers
